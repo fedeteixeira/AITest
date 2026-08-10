@@ -1,6 +1,6 @@
-# MCPTest - AI-Powered Natural Language SQL Assistant
+# AITest - AI-Powered Natural Language SQL Assistant
 
-`mcptest` is an AI-driven SQL query management assistant built with [PydanticAI](https://github.com/pydantic/pydantic-ai). It allows users to query and manipulate a MySQL / MariaDB database using natural language commands while enforcing safety guardrails through a dedicated secondary AI Judge agent.
+`aitest` is an AI-driven SQL query management assistant built with [PydanticAI](https://github.com/pydantic/pydantic-ai). It allows users to query and manipulate a MySQL / MariaDB database using natural language commands while enforcing safety guardrails through a dedicated secondary AI Judge agent.
 
 ---
 
@@ -19,7 +19,7 @@
 ## 🏗️ Project Architecture
 
 ```
-MCPTest/
+AITest/
 ├── controllers/
 │   └── sql_agent.py                 # SQL Agent & SQL Judge Agent implementation
 ├── models/
@@ -78,7 +78,7 @@ SEED_DB=false
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd MCPTest
+   cd AITest
    ```
 
 2. **Install dependencies**:

@@ -19,6 +19,37 @@ wheels = [
 ]
 
 [[package]]
+name = "aitest"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "faker" },
+    { name = "groq" },
+    { name = "mysql-connector-python" },
+    { name = "pydantic" },
+    { name = "pydantic-ai" },
+    { name = "python-dotenv" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "faker", specifier = ">=40.36.0" },
+    { name = "groq", specifier = ">=1.6.0" },
+    { name = "mysql-connector-python", specifier = ">=26.7.0" },
+    { name = "pydantic", specifier = ">=2.13.4" },
+    { name = "pydantic-ai", specifier = ">=2.27.0" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff", specifier = ">=0.16.2" }]
+
+[[package]]
 name = "annotated-types"
 version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -883,37 +914,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/30/d3/f9acc21dfc886e4f7
 wheels = [
     { url = "https://files.pythonhosted.org/packages/01/c8/248b201f6d753d69fd5d6506011abbb35a946d9142b2ae311a948fd0be3d/mcp-1.29.0-py3-none-any.whl", hash = "sha256:f5a075bb611f23d6f4d080c6a1699fa62772eebc562ba9e66b306ddde1c755f7", size = 223436, upload-time = "2026-07-28T13:41:40.337Z" },
 ]
-
-[[package]]
-name = "mcptest"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "faker" },
-    { name = "groq" },
-    { name = "mysql-connector-python" },
-    { name = "pydantic" },
-    { name = "pydantic-ai" },
-    { name = "python-dotenv" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "faker", specifier = ">=40.36.0" },
-    { name = "groq", specifier = ">=1.6.0" },
-    { name = "mysql-connector-python", specifier = ">=26.7.0" },
-    { name = "pydantic", specifier = ">=2.13.4" },
-    { name = "pydantic-ai", specifier = ">=2.27.0" },
-    { name = "python-dotenv", specifier = ">=1.2.2" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.16.2" }]
 
 [[package]]
 name = "mdurl"
