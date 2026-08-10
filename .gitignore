@@ -1,0 +1,12 @@
+# Environment Files
+.env
+.venv
+
+# Cache Files
+.ruff_cache
+__pycache__
+
+# Local Folders
+.vscode
+Logs
+Local
