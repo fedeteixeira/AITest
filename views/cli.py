@@ -19,8 +19,6 @@ class CLI:
                     raise KeyboardInterrupt
                 result: AgentRunResult[AgentOutput] = await self.__sql_agent.run_query(query=query, sql_agent_dependencies=self.__sql_agent_dependencies, message_history=message_history)
                 message_history = result.all_messages()
-                print(result.output.prompt_advice)
-                for response in result.output.select_response:
-                    print(response)
-        except KeyboardInterrupt or EOFError:
+                print(result.output.response_message)
+        except (KeyboardInterrupt, EOFError):
             print("Program terminated by user.")

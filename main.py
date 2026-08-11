@@ -1,6 +1,4 @@
 import asyncio
-import os
-from dotenv import load_dotenv
 
 from controllers.sql_agent import EvaluationDependencies, SQLAgent, SqlAgentDependencies
 from database_connection_manager import DatabaseConnectionManager
@@ -9,25 +7,24 @@ from seeders.db_seeder import DbSeeder
 from services.notes_service import NotesService
 from services.user_service import UserService
 from views.cli import CLI
+from config import AgentSettings, DbSettings
 
-
-def run_seeder_if_requested():
-    seed_db = os.getenv("SEED_DB", "false").lower() in ("true", "1", "yes")
+def run_seeder_if_requested(db, seed_db):
     if seed_db:
         print("Seeding database...")
-        db_seeder = DbSeeder()
+        db_seeder = DbSeeder(db)
         db_seeder.seed_tables()
         db_seeder.seed_users()
         db_seeder.seed_notes()
         print("Database seeded successfully.")
 
-
 async def main():
     user_id = 1
-    load_dotenv()
-    run_seeder_if_requested()
-    sql_agent = SQLAgent(Logger("Agent"))
-    with DatabaseConnectionManager(Logger("AgentQueries")) as db:
+    agent_settings = AgentSettings()
+    db_settings = DbSettings()
+    sql_agent = SQLAgent(combo_model=agent_settings.get_combo_model(), logger=Logger("Agent"))
+    with DatabaseConnectionManager(settings=db_settings, logger=Logger("AgentQueries")) as db:
+        run_seeder_if_requested(db, seed_db=db_settings.seed_db)
         user_service = UserService(db)
         notes_service = NotesService(db)
         db_context = {

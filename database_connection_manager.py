@@ -1,23 +1,21 @@
 import asyncio
 
+from config import DbSettings
 from logger import Logger
-import os
 import mysql.connector
-from dotenv import load_dotenv
 
 class DatabaseConnectionManager:
-    def __init__(self, logger: Logger):
+    def __init__(self, settings: DbSettings, logger: Logger):
         self.__logger = logger
-        load_dotenv()
         self.__POOL_CONFIGS = {
             'pool_name': "db_pool",
             'pool_size': 5
         }
-        self.__WRITE_CREDENTIALS_DICT = {
-            'user': os.getenv('DB_USER'),
-            'host': os.getenv('DB_HOST'),
-            'passwd': os.getenv('DB_PASSWORD'),
-            'database': os.getenv('DB_NAME'),
+        self.__WRITE_CREDENTIALS_DICT: dict[str] = {
+            'user': settings.db_user,
+            'host': settings.db_host,
+            'passwd': settings.db_password,
+            'database': settings.db_name,
         }
 
     def __enter__(self):
@@ -48,6 +46,11 @@ class DatabaseConnectionManager:
     def execute_write_with_commit(self, query, values=None):
         self.execute_write(query, values)
         self.__conn.commit()
+
+    def execute_batch_write(self, query, values, commit=False):
+        self.__cursorObject.executemany(query, values)
+        if commit:
+            self.__conn.commit()
 
     async def execute_async_write_with_commit(self, query, values=None):
         await asyncio.to_thread(self.execute_write_with_commit, query, values)

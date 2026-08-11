@@ -1,16 +1,11 @@
-import os
 import mysql.connector
 from database_connection_manager import DatabaseConnectionManager
 from services.notes_service import NotesService
 from services.user_service import UserService
 from dataclasses import dataclass
-from dotenv import load_dotenv
 
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.capabilities import Thinking
-from pydantic_ai.models.google import GoogleModel
-from pydantic_ai.providers.google import GoogleProvider
-from pydantic_ai.models.groq import GroqModel
 from pydantic_ai.models.fallback import FallbackModel
 from pydantic import BaseModel, Field
 
@@ -34,23 +29,11 @@ class EvaluationOutput(BaseModel):
     risk: int = Field(description="Risk level of query, if it's above 8 don't run it", ge=0, le=10)
 
 class AgentOutput(BaseModel):
-    prompt_advice: str = Field(description='Message returned to the user, to ask for the prompt they want to run.')
-    write_advice: str = Field(description='Write a a message to display to the user summarizing what was done.')
-    select_response: list[tuple]|None = Field(description='The possible values the query might produce')
+    response_message: str = Field(description='The primary text response to display to the user, summarizing query results, execution details, or rejection reasons.')
 
 class SQLAgent:
-    def __init__(self, logger: Logger):
-        load_dotenv()
+    def __init__(self, combo_model: FallbackModel, logger: Logger):
         self.__logger = logger
-
-        groq_model = GroqModel('llama-3.3-70b-versatile')
-        provider = GoogleProvider(api_key=os.getenv('GOOGLE_API_KEY'))
-        google_model = GoogleModel(os.getenv('GOOGLE_API_MODEL'), provider=provider)
-
-        combo_model = FallbackModel(
-            google_model
-            ,groq_model
-        )
 
         self.__agent = Agent(
             combo_model,
