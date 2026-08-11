@@ -9,11 +9,17 @@ class DbSeeder:
         self.__fake = Faker()
         self.__db = db
 
+    def ensure_tables_exist(self):
+        self.__db.execute_write_with_commit(f"CREATE TABLE IF NOT EXISTS {self.__USERS_TABLE} (id INT AUTO_INCREMENT PRIMARY KEY, first_name VARCHAR(255), last_name VARCHAR(255))")
+        self.__db.execute_write_with_commit(f"CREATE TABLE IF NOT EXISTS {self.__NOTES_TABLE} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), contents TEXT, user_id INT, FOREIGN KEY (user_id) REFERENCES {self.__USERS_TABLE}(id) ON DELETE CASCADE)")  # noqa: E501
+        users = self.__db.execute_read(f"SELECT id FROM {self.__USERS_TABLE} LIMIT 1")
+        if not users:
+            self.__db.execute_write_with_commit(f"INSERT INTO {self.__USERS_TABLE} (id, first_name, last_name) VALUES (1, 'Default', 'User')")
+
     def seed_tables(self):
-        self.__db.execute_write(f"DROP TABLE IF EXISTS {self.__NOTES_TABLE}")
-        self.__db.execute_write(f"DROP TABLE IF EXISTS {self.__USERS_TABLE}")
-        self.__db.execute_write(f"CREATE TABLE IF NOT EXISTS {self.__USERS_TABLE} (id INT AUTO_INCREMENT PRIMARY KEY, first_name VARCHAR(255), last_name VARCHAR(255))")
-        self.__db.execute_write(f"CREATE TABLE IF NOT EXISTS {self.__NOTES_TABLE} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), contents TEXT, user_id INT, FOREIGN KEY (user_id) REFERENCES {self.__USERS_TABLE}(id) ON DELETE CASCADE)")  # noqa: E501
+        self.__db.execute_write_with_commit(f"DROP TABLE IF EXISTS {self.__NOTES_TABLE}")
+        self.__db.execute_write_with_commit(f"DROP TABLE IF EXISTS {self.__USERS_TABLE}")
+        self.ensure_tables_exist()
 
     def seed_users(self):
         values = []

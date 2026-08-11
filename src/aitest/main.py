@@ -11,6 +11,8 @@ from aitest.views.cli import CLI
 
 
 def run_seeder_if_requested(db, seed_db):
+    db_seeder = DbSeeder(db)
+    db_seeder.ensure_tables_exist()
     if seed_db:
         print("Seeding database...")
         db_seeder = DbSeeder(db)

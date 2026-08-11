@@ -22,6 +22,7 @@ class DatabaseConnectionManager:
         # Connecting from the server
         self.__logger.get_logger().info("Connecting to DB...")
         self.__conn = mysql.connector.connect(**self.__POOL_CONFIGS, **self.__WRITE_CREDENTIALS_DICT)
+        self.__conn.autocommit = True
         self.__cursorObject = self.__conn.cursor(dictionary=True)
         self.__logger.get_logger().info("Connected to DB")
         return self
