@@ -83,38 +83,49 @@ class SQLAgent:
             ctx: RunContext[SqlAgentDependencies],
             query: str,
             values: list[str]|None
-        ) -> None:
+        ) -> str:
             """Executes a Write SQL"""
             result = await self.__sql_judge_agent.run(f"query:{query}, parameters:{values}", deps=ctx.deps.evaluation_dependencies)
             self.__logger.get_logger().info(f"Running write query: {query}, with values: {values} with risk: {result.output.risk}")
             if result.output.risk >= 8:
-                raise ModelRetry("The query is too dangerous to run, reject it")
+                response = f"Query rejected: The security validator assigned a risk score of {result.output.risk}/10 (8+ is unsafe). Operation blocked."
+                self.__logger.get_logger().warning((response))
+                return response
             try:
-                return await ctx.deps.db.execute_async_write_with_commit(
+                await ctx.deps.db.execute_async_write_with_commit(
                     query,
                     values
                 )
+                response = "Query executed successfully."
+                self.__logger.get_logger().info(response)
+                return response
             except mysql.connector.Error as err:
-                raise ModelRetry(f"The query failed with: {err}")
+                error_message = f"The write query failed with: {err}"
+                self.__logger.get_logger().warning(error_message)
+                raise ModelRetry(error_message)
 
         @self.__agent.tool(retries=5)
         async def read(
             ctx: RunContext[SqlAgentDependencies],
             query: str,
             values: list[str]|None
-        ) -> list:
+        ) -> list|str:
             """Executes a read SQL"""
             result = await self.__sql_judge_agent.run(f"query:{query}, parameters:{values}", deps=ctx.deps.evaluation_dependencies)
             self.__logger.get_logger().info(f"Running read query: {query}, with values: {values} with risk: {result.output.risk}")
             if result.output.risk >= 8:
-                raise ModelRetry("The query is too dangerous to run, reject it")
+                response = f"Query rejected: The security validator assigned a risk score of {result.output.risk}/10 (8+ is unsafe). Operation blocked."
+                self.__logger.get_logger().warning((response))
+                return response
             try:
                 return await ctx.deps.db.execute_async_read(
                     query,
                     values
                 )
             except mysql.connector.Error as err:
-                raise ModelRetry(f"The query failed with: {err}")
+                error_message = f"The read query failed with: {err}"
+                self.__logger.get_logger().warning(error_message)
+                raise ModelRetry(error_message)
 
     async def run_query(self, query, sql_agent_dependencies: SqlAgentDependencies, message_history = None):
         try:
