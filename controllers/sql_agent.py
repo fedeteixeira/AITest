@@ -27,6 +27,8 @@ class SqlAgentDependencies:
     db_context: dict
     user_name: str
     evaluation_dependencies: EvaluationDependencies
+    user_service: UserService
+    notes_service: NotesService
 
 class EvaluationOutput(BaseModel):
     risk: int = Field(description="Risk level of query, if it's above 8 don't run it", ge=0, le=10)
@@ -131,28 +133,10 @@ class SQLAgent:
             except mysql.connector.Error as err:
                 raise ModelRetry(f"The query failed with: {err}")
 
-    async def main(self):
-        user_id = 1
-        with DatabaseConnectionManager(Logger("AgentQueries")) as db:
-            user_service = UserService(db)
-            notes_service = NotesService(db)
-            db_context = {
-                "users": await user_service.get_user_table_describe(),
-                "notes": await notes_service.get_notes_table_describe()
-            }
-            user_object = await user_service.get_user_by_id(user_id)
-            if not user_object:
-                raise Exception(f"User with id {user_id} not found in the database")
-            evaluation_dependencies = EvaluationDependencies(user_id=user_id)
-            deps = SqlAgentDependencies(db=db, user_id=user_id, db_context=db_context, user_name=user_object.get_full_name(), evaluation_dependencies=evaluation_dependencies)
-            print("Hi, I'm your SQL manager!")
-            message_history = None
-            while(True):
-                query = input()
-                try:
-                    result = await self.__agent.run(query, deps=deps, message_history=message_history)
-                    message_history = result.all_messages()
-                    print(result.output)
-                except Exception as err:
-                    self.__logger.get_logger().error(err)
-                    print(err)
+    async def run_query(self, query, sql_agent_dependencies: SqlAgentDependencies, message_history = None):
+        try:
+            result = await self.__agent.run(query, deps=sql_agent_dependencies, message_history=message_history)
+            return result
+        except Exception as err:
+            self.__logger.get_logger().error(err)
+            raise err
