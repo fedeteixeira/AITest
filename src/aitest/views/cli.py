@@ -29,12 +29,12 @@ class CLI:
                     continue
                 if query.lower() in allowed_exit_keywords:
                     break
-
-                result: AgentRunResult[AgentOutput] = await self.__sql_agent.run_query(
-                    query=query,
-                    sql_agent_dependencies=self.__sql_agent_dependencies,
-                    message_history=message_history,
-                )
+                with self.__console.status("[bold green]Thinking...") as _:
+                    result: AgentRunResult[AgentOutput] = await self.__sql_agent.run_query(
+                        query=query,
+                        sql_agent_dependencies=self.__sql_agent_dependencies,
+                        message_history=message_history,
+                    )
                 message_history = result.all_messages()
                 self.__console.print()
                 self.__console.print(Markdown(result.output.response_message))
