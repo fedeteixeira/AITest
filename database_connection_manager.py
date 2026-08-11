@@ -28,7 +28,7 @@ class DatabaseConnectionManager:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         # Rollback the transaction if there was an error and print it
-        if exc_type is mysql.connector.Error or exc_value is not None:
+        if (exc_type is not None and issubclass(exc_type, mysql.connector.Error)) or exc_value is not None:
             self.__logger.get_logger().error((exc_type, exc_value, exc_traceback))
             self.__logger.get_logger().error("Failed query: %s", exc_value)
             self.__conn.rollback()
