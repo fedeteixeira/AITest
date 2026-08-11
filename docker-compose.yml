@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+  db:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+      start_period: 30s
+    volumes:
+      # Preload files for MySQL data
+      - ./mysql:/docker-entrypoint-initdb.d:z
+      # We have to save MySQL volume that will be used in upgrade
+      - dbdata:/var/lib/mysql
+volumes:
+  dbdata:
