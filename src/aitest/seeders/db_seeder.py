@@ -1,6 +1,6 @@
 from faker import Faker
 
-from database_connection_manager import DatabaseConnectionManager
+from aitest.database_connection_manager import DatabaseConnectionManager
 
 class DbSeeder:
     def __init__(self, db: DatabaseConnectionManager):

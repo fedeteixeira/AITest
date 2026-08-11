@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 
-from controllers.sql_agent import AgentOutput, SQLAgent, SqlAgentDependencies
+from aitest.controllers.sql_agent import AgentOutput, SQLAgent, SqlAgentDependencies
 
 
 class CLI:

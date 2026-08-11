@@ -1,15 +1,14 @@
 import mysql.connector
-from database_connection_manager import DatabaseConnectionManager
-from services.notes_service import NotesService
-from services.user_service import UserService
+from aitest.database_connection_manager import DatabaseConnectionManager
+from aitest.logger import Logger
+from aitest.services.notes_service import NotesService
+from aitest.services.user_service import UserService
 from dataclasses import dataclass
 
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.capabilities import Thinking
 from pydantic_ai.models.fallback import FallbackModel
 from pydantic import BaseModel, Field
-
-from logger import Logger
 
 @dataclass
 class EvaluationDependencies:

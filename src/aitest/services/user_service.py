@@ -1,5 +1,5 @@
-from database_connection_manager import DatabaseConnectionManager
-from models.user import User
+from aitest.database_connection_manager import DatabaseConnectionManager
+from aitest.models.user import User
 
 class UserService:
     def __init__(self, db:DatabaseConnectionManager):

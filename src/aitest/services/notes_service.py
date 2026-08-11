@@ -1,4 +1,4 @@
-from database_connection_manager import DatabaseConnectionManager
+from aitest.database_connection_manager import DatabaseConnectionManager
 
 class NotesService:
     def __init__(self, db:DatabaseConnectionManager):

@@ -1,8 +1,8 @@
 import asyncio
 
-from config import DbSettings
-from logger import Logger
 import mysql.connector
+from aitest.config import DbSettings
+from aitest.logger import Logger
 
 class DatabaseConnectionManager:
     def __init__(self, settings: DbSettings, logger: Logger):

@@ -1,13 +1,14 @@
 import asyncio
 
-from controllers.sql_agent import EvaluationDependencies, SQLAgent, SqlAgentDependencies
-from database_connection_manager import DatabaseConnectionManager
-from logger import Logger
-from seeders.db_seeder import DbSeeder
-from services.notes_service import NotesService
-from services.user_service import UserService
-from views.cli import CLI
-from config import AgentSettings, DbSettings
+from aitest.config import AgentSettings, DbSettings
+from aitest.controllers.sql_agent import EvaluationDependencies, SQLAgent, SqlAgentDependencies
+from aitest.database_connection_manager import DatabaseConnectionManager
+from aitest.logger import Logger
+from aitest.seeders.db_seeder import DbSeeder
+from aitest.services.notes_service import NotesService
+from aitest.services.user_service import UserService
+from aitest.views.cli import CLI
+
 
 def run_seeder_if_requested(db, seed_db):
     if seed_db:
@@ -17,6 +18,7 @@ def run_seeder_if_requested(db, seed_db):
         db_seeder.seed_users()
         db_seeder.seed_notes()
         print("Database seeded successfully.")
+
 
 async def main():
     user_id = 1
@@ -29,7 +31,7 @@ async def main():
         notes_service = NotesService(db)
         db_context = {
             "users": await user_service.get_user_table_describe(),
-            "notes": await notes_service.get_notes_table_describe()
+            "notes": await notes_service.get_notes_table_describe(),
         }
         user_object = await user_service.get_user_by_id(user_id)
         if not user_object:
@@ -41,11 +43,12 @@ async def main():
             db_context=db_context,
             user_name=user_object.get_full_name(),
             evaluation_dependencies=evaluation_dependencies,
-            user_service = user_service,
-            notes_service = notes_service
+            user_service=user_service,
+            notes_service=notes_service,
         )
         cli = CLI(sql_agent_dependencies=sql_agent_dependencies, sql_agent=sql_agent)
         await cli.main()
+
 
 if __name__ == "__main__":
     try:
